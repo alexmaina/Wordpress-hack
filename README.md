@@ -1,4 +1,4 @@
-Package: Wordpress hack </ br>
+Package: Wordpress hack__
 Type: Plugin
 Title: Wordpress plugin to update a Wordpress powered website
 Date: 2016-05-24
