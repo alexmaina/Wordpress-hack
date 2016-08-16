@@ -1,6 +1,6 @@
-# Package: Wordpress-hack
-# Type: Plugin
-# Title: A Wordpress academic publications plugin
+Package: Wordpress-hack
+ype: Plugin
+Title: A Wordpress academic publications plugin
 Date: 2016-05-24
 Author: Alex Maina <alexmaina@afroscholar.info>
 Maintainer: Alex Maina
