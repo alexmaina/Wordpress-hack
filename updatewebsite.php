@@ -36,7 +36,8 @@ require('../wp-load.php');
 $user_id = 77;
 $con = dbConnect();
 
-$query="select author,year,title,pages,secondary_title,volume,number,abstract,date,custom_2,accession_number from refs where pubid between 3137 and 3144";
+$query="select author,year,title,pages,secondary_title,volume,number,abstract,date,custom_2,accession_number
+from refs where pubid between 3137 and 3144";
 $sql=$con->prepare($query);
 $sql->execute();
 $sql->SetFetchMode(PDO::FETCH_ASSOC);
@@ -80,7 +81,14 @@ while ($row=$sql->fetch()){
 	$year = $row['year'];
 	$pmid = $row['accession_number'];
 	
-	$query2 = "insert into wp_posts(post_author,post_date,post_date_gmt,post_content,post_title,post_excerpt,post_status,comment_status,ping_status,post_password,post_name,to_ping,pinged,post_modified,post_modified_gmt,post_content_filtered,post_parent,guid,menu_order,post_type,post_mime_type,comment_count) values(:post_author,:post_date,:post_date_gmt,:post_content,:post_title,:post_excerpt,:post_status,:comment_status,:ping_status,:post_password,:post_name,:to_ping,:pinged,:post_modified,:post_modified_gmt,:post_content_filtered,:post_parent,:guid,:menu_order,:post_type,:post_mime_type,:comment_count) ";
+	$query2 = "insert into wp_posts(post_author,post_date,post_date_gmt,post_content,post_title,
+	post_excerpt,post_status,comment_status,ping_status,post_password,post_name,to_ping,pinged,
+	post_modified,post_modified_gmt,post_content_filtered,post_parent,guid,menu_order,
+	post_type,post_mime_type,comment_count)
+	values(:post_author,:post_date,:post_date_gmt,:post_content,:post_title,:post_excerpt,:post_status,:comment_status,
+	:ping_status,:post_password,:post_name,:to_ping,:pinged,:post_modified,:post_modified_gmt,
+	:post_content_filtered,:post_parent,:guid,:menu_order,:post_type,:post_mime_type,:comment_count) ";
+	
 	$stm=$con->prepare($query2);
 	$stm->bindValue(':post_author', $post_author, PDO::PARAM_INT);
 	$stm->bindValue(':post_date', $post_date, PDO::PARAM_STR);
@@ -165,7 +173,8 @@ while ($row=$sql->fetch()){
 					$initials = rtrim($name,'.');
 					$initialsx = ltrim($initials);
 					$medline_name = $name1 . ' ' . $initialsx;
-					$query5 = "insert into author_publication (post_id,surname,initials,name,medline_name) values (:post_id, :name1, :initials,:name,:medline_name)";
+					$query5 = "insert into author_publication (post_id,surname,initials,name,medline_name) 
+					values (:post_id, :name1, :initials,:name,:medline_name)";
 					$stm3 = $con->prepare($query5);
 					$stm3->bindValue(':post_id', $post_id, PDO::PARAM_INT);
 		   			$stm3->bindValue(':name1', $name1, PDO::PARAM_STR);
@@ -176,7 +185,10 @@ while ($row=$sql->fetch()){
 					//echo "success-2!";
 				}
 
-	$query5 = " select apid, post_id, ID, email from author_publication inner join people on author_publication.medline_name = people.medline_name inner join wp_users on people.email = wp_users.user_email";
+	$query5 = " select apid, post_id, ID, email from author_publication 
+	inner join people on author_publication.medline_name = people.medline_name
+	inner join wp_users on people.email = wp_users.user_email";
+			
 	$sql=$con->prepare($query5);
 	$sql->execute();
 	$sql->setFetchMode(PDO::FETCH_ASSOC);
@@ -199,14 +211,20 @@ while ($row=$sql->fetch()){
 //*********************************//
 
 $con = dbConnect();
-$query = "create temporary table tableX(meta_id int(11) not null auto_increment, post_id int(11) not null, meta_key varchar(255), meta_value varchar(255), primary key(meta_id))";
+$query = "create temporary table tableX(meta_id int(11) not null auto_increment, post_id int(11) not null,
+meta_key varchar(255), meta_value varchar(255), primary key(meta_id))";
 $sql=$con->prepare($query);
 $sql->execute();
 //
 //
 //
 
-$query = "SELECT t1.post_id,'multiple' AS multiple,COUNT(*) as count FROM people_publication AS t1 GROUP BY t1.post_id UNION SELECT t2.post_id, REPLACE(CONCAT('multiple_', @curRow:=CASE WHEN @postId = t2.post_id THEN @curRow + 1 ELSE 0 END, @postId:=t2.post_id), t2.post_id,'') AS multiple, t2.ID FROM people_publication AS t2 ORDER BY post_id, multiple";
+$query = "SELECT t1.post_id,'multiple' AS multiple,COUNT(*) as count FROM 
+people_publication AS t1 GROUP BY t1.post_id UNION SELECT t2.post_id, 
+REPLACE(CONCAT('multiple_', @curRow:=CASE WHEN @postId = t2.post_id 
+THEN @curRow + 1 ELSE 0 END, @postId:=t2.post_id), t2.post_id,'') 
+AS multiple, t2.ID FROM people_publication AS t2 ORDER BY post_id, multiple";
+
 $sql=$con->prepare($query);
 $sql->execute();
 $sql->setFetchMode(PDO::FETCH_ASSOC);
